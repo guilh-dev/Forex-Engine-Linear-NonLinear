@@ -6,3 +6,14 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+tokio = { version = "1", features = ["full"] }
+tokio-tungstenite = { version = "0.21", features = ["native-tls"] }
+futures-util = "0.3"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0" # Comece com este, migre para simd-json quando o volume subir
+
+[profile.release]
+opt-level = 3        # Otimização máxima de velocidade
+lto = "fat"          # Link-Time Optimization (crucial para inlining do Kalman/SGD)
+codegen-units = 1    # Melhora a otimização de LTO
+panic = "abort"      # Remove overhead de unwinding em caso de pânico
