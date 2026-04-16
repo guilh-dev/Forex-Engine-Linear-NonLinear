@@ -1,11 +1,11 @@
 pub struct KalmanFilter {
-    /// Estimativa do estado atual (ex: preço suavizado)
+    /// Estimate of the current state (e.g. smoothed price)
     pub state: f64,
-    /// Incerteza da estimativa (Covariância)
+    /// Estimation uncertainty (Covariance)
     pub p: f64,
-    /// Ruído do processo (Quão rápido o mercado muda intrinsecamente)
+    /// Market volatility (The speed at which the market changes)
     pub q: f64,
-    /// Ruído da medição (Volatilidade/Ruído do sensor ou tick)
+    /// Measurement noise (Volatility/Sensor noise or tick noise)
     pub r: f64,
 }
 
@@ -14,16 +14,12 @@ impl KalmanFilter {
         Self { state: initial_price, p: 1.0, q, r }
     }
 
-    /// Atualiza o filtro com um novo tick e retorna a previsão
+    /// Refreshes the filter by ticking a new box and returns the forecast
     #[inline(always)]
     pub fn update(&mut self, measurement: f64) -> f64 {
-        // Equações de Previsão
         let p_pred = self.p + self.q;
-
-        // Ganho de Kalman
         let k = p_pred / (p_pred + self.r);
 
-        // Atualização do Estado
         self.state = self.state + k * (measurement - self.state);
         self.p = (1.0 - k) * p_pred;
 
